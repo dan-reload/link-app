@@ -23,7 +23,7 @@
   When we update the app, we change this name, which tells
   the browser to download fresh copies of everything.
 */
-var CACHE_NAME = 'link-saver-v1';
+var CACHE_NAME = 'link-saver-v2';
 
 /*
   FILES_TO_CACHE is the list of files that make up the app.
@@ -31,14 +31,14 @@ var CACHE_NAME = 'link-saver-v1';
   time someone visits.
 */
 var FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/apple-touch-icon.png'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png'
 ];
 
 
@@ -135,7 +135,7 @@ self.addEventListener('fetch', function(event) {
       // Both cache and network failed — we're truly offline
       // For navigation requests, return the cached index page
       if (event.request.mode === 'navigate') {
-        return caches.match('/index.html');
+        return caches.match('./index.html');
       }
     })
   );
