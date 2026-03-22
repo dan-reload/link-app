@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!--
+    This "viewport" tag makes the page fit properly on a phone screen.
+    "viewport-fit=cover" lets the app extend behind the iPhone notch/island.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>Link Saver</title>
+
+  <!--
+    These "apple" meta tags tell Safari how to behave when the user
+    adds this page to their iPhone homescreen:
+    - apple-mobile-web-app-capable: launch fullscreen (no Safari toolbar)
+    - apple-mobile-web-app-status-bar-style: make the status bar blend in
+  -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Links">
+
+  <!-- Theme colour — matches iOS light mode system background -->
+  <meta name="theme-color" content="#F2F2F7">
+
+  <!-- Homescreen icon for iPhones -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+  <!--
+    The "manifest" tells the browser this is a Progressive Web App (PWA).
+    It contains the app name, icons, and how to launch it.
+  -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Our stylesheet — all the visual design lives here -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!--
+    The background layer creates a subtle wallpaper-style gradient.
+    Much more muted than before — like an Apple dark wallpaper.
+  -->
+  <div class="bg-gradient" aria-hidden="true"></div>
+
+  <!-- ============================================
+       APP HEADER — iOS Large Title Style
+       34px bold title with link count below.
+       ============================================ -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">Links</h1>
+      <span class="link-count" id="linkCount">0 saved</span>
+    </div>
+  </header>
+
+  <!-- ============================================
+       MAIN CONTENT
+       The scrollable area where saved links appear.
+       ============================================ -->
+  <main class="content" id="content">
+
+    <!--
+      Empty state — shown when there are no saved links.
+      Hidden once the user saves their first link.
+    -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">
+        <!-- Bookmark icon -->
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <h2 class="empty-title">No Saved Links</h2>
+      <p class="empty-subtitle">Links you save will appear here.<br>Tap the button below to get started.</p>
+    </div>
+
+    <!--
+      Links list — a grouped container (like iOS Settings sections).
+      Each saved link becomes a row inside here.
+    -->
+    <div class="links-list" id="linksList"></div>
+  </main>
+
+  <!-- ============================================
+       BOTTOM TOOLBAR — Apple-style (replaces FAB)
+       Like Safari, Mail, or Notes — a thin glass
+       bar at the bottom with a centred add button.
+       ============================================ -->
+  <nav class="bottom-toolbar">
+    <div class="toolbar-content">
+      <button class="toolbar-add-btn" id="addButton" aria-label="Add new link">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       MODAL OVERLAY — iOS Sheet
+       The dark backdrop + sliding panel for adding
+       a new link.
+       ============================================ -->
+  <div class="modal-overlay" id="modalOverlay">
+
+    <!-- The sheet that slides up from the bottom -->
+    <div class="modal" id="modal">
+      <div class="modal-handle" aria-hidden="true"></div>
+
+      <h2 class="modal-title">New Link</h2>
+
+      <!--
+        The form for adding a new link.
+        Inputs are grouped in a shared container (iOS Settings style).
+      -->
+      <form id="addLinkForm" autocomplete="off">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="urlInput" class="input-label">URL</label>
+            <input
+              type="url"
+              id="urlInput"
+              class="input"
+              placeholder="URL"
+              required
+              inputmode="url"
+            >
+          </div>
+
+          <div class="input-group">
+            <label for="titleInput" class="input-label">Title</label>
+            <input
+              type="text"
+              id="titleInput"
+              class="input"
+              placeholder="Title (optional)"
+            >
+          </div>
+        </div>
+
+        <button type="submit" class="btn-save" id="saveButton">
+          Save
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TOAST NOTIFICATION
+       A small pill-shaped pop-up that confirms
+       actions like "Link saved!" or "Link deleted".
+       ============================================ -->
+  <div class="toast" id="toast"></div>
+
+  <!--
+    App logic — loaded at the end so the HTML is ready before
+    the JavaScript tries to find elements on the page.
+  -->
+  <script src="app.js"></script>
+
+  <!--
+    Register the Service Worker.
+    A Service Worker is a script that runs in the background and lets
+    the app work offline and be installed on the homescreen.
+  -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(function() { console.log('Service Worker registered'); })
+        .catch(function(err) { console.log('Service Worker failed:', err); });
+    }
+  </script>
+</body>
+</html>
